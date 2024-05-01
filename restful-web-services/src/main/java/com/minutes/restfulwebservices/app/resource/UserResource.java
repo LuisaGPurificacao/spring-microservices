@@ -1,10 +1,13 @@
 package com.minutes.restfulwebservices.app.resource;
 
 import com.minutes.restfulwebservices.app.dto.request.UserSaveRequest;
+import com.minutes.restfulwebservices.app.dto.response.PostResponse;
 import com.minutes.restfulwebservices.app.dto.response.UserResponse;
+import com.minutes.restfulwebservices.app.service.IPostService;
 import com.minutes.restfulwebservices.app.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +25,7 @@ public class UserResource {
     }
 
     @GetMapping(path = "/users/{id}")
-    public UserResponse getUser(@PathVariable Integer id) {
+    public EntityModel<UserResponse> getUser(@PathVariable Integer id) {
         return service.findOne(id);
     }
 

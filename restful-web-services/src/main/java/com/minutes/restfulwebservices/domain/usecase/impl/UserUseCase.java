@@ -3,40 +3,36 @@ package com.minutes.restfulwebservices.domain.usecase.impl;
 import com.minutes.restfulwebservices.cross.exception.UserNotFoundException;
 import com.minutes.restfulwebservices.domain.entity.UserEntity;
 import com.minutes.restfulwebservices.domain.usecase.IUserUseCase;
+import com.minutes.restfulwebservices.infra.dataprovider.UserDataProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class UserUseCase implements IUserUseCase {
 
-    private static List<UserEntity> users = new ArrayList<>();
-
-    static {
-        users.add(new UserEntity(1, "Matheus", LocalDate.of(1995, 9, 4)));
-        users.add(new UserEntity(2, "Luisa", LocalDate.of(2004, 9, 16)));
-        users.add(new UserEntity(3, "Lívia", LocalDate.of(2003, 12, 16)));
-    }
+    @Autowired
+    private UserDataProvider dataProvider;
 
     public List<UserEntity> findAll() {
-        return users;
+        return dataProvider.findAll();
     }
 
     public UserEntity save(UserEntity user) {
-        int userId = users.size();
-        user.setId(++userId);
-        users.add(user);
-        return user;
+        return dataProvider.save(user);
     }
 
     public UserEntity findOne(Integer id) {
-        return users.stream().filter(user -> user.getId().equals(id)).findFirst().orElseThrow(() -> new UserNotFoundException(id));
+        UserEntity user = dataProvider.findById(id);
+        if (Objects.isNull(user))
+            throw new UserNotFoundException(id);
+        return user;
     }
 
     public void deleteById(Integer id) {
-        users.removeIf(user -> user.getId().equals(id));
+        dataProvider.deleteById(id);
     }
 
 }
